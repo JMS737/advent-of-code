@@ -41,11 +41,12 @@ int processLocations() {
   qsort(left, 1000, sizeof(int), compareInt);
   qsort(right, 1000, sizeof(int), compareInt);
 
-    FILE *out = fopen("sorted.txt", "w");
+  // example writing to a file
+  FILE *out = fopen("sorted.txt", "w");
 
-    for (int i = 0; i < 1000; i++){
-        fprintf(out, "%i   %i\n", left[i], right[i]);
-    }
+  for (int i = 0; i < 1000; i++) {
+    fprintf(out, "%i   %i\n", left[i], right[i]);
+  }
 
   int sum = 0;
 
