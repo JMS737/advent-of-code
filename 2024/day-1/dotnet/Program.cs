@@ -1,4 +1,4 @@
-﻿var inputs = LoadInput("input.txt");
+﻿var inputs = LoadInput("../input.txt");
 
 var diffScore = GetTotalDifference(inputs);
 Console.WriteLine($"Total difference is: {diffScore}");
