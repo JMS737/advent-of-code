@@ -23,11 +23,12 @@ int main() {
   char line[10000];
   char line_match[13];
   char *line_start;
-  char pattern[] = "mul\\([0-9]+,[0-9]+\\)";
+  char pattern[] = "(mul\\([0-9]+,[0-9]+\\)|do(n't){0,1}\\(\\))";
   regmatch_t matches[1];
   regex_t regex;
   int i_match;
   int len;
+  int enabled = 1;
 
   regcomp(&regex, pattern, REG_EXTENDED);
   int rdebug;
@@ -48,9 +49,19 @@ int main() {
       // printf("found match '%s'\n", line_match);
       line_start += len;
 
-      sscanf(line_match, "mul(%d,%d)", &a, &b);
-      // printf("adding %d * %d = %d\n", a, b, a * b);
-      sum += a * b;
+      if (line_match[2] == 'n') {
+        enabled = 0;
+      } else if (line_match[2] == '(') {
+        enabled = 1;
+      } else {
+        if (enabled) {
+          sscanf(line_match, "mul(%d,%d)", &a, &b);
+          // printf("adding %d * %d = %d\n", a, b, a * b);
+          sum += a * b;
+        } else {
+          // printf("skipping\n");
+        }
+      }
     }
   }
 
