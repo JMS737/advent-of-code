@@ -28,7 +28,7 @@ int main() {
   regex_t regex;
   int i_match;
   int len;
-  
+
   regcomp(&regex, pattern, REG_EXTENDED);
   int rdebug;
 
@@ -41,6 +41,10 @@ int main() {
       len = matches[0].rm_eo - matches[0].rm_so;
 
       strncpy(line_match, line_start, len);
+      // set the termination charater to prevent any existing data in the buffer
+      // from being considered
+      // (not actually necessary for this use case but good to know)
+      line_match[len] = '\0';
       // printf("found match '%s'\n", line_match);
       line_start += len;
 
