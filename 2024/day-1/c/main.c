@@ -16,7 +16,7 @@ int getlocations(const char *filename, int *left, int *right, const unsigned int
 
   while (fscanf(locations, "%i   %i\n", &locationLeft, &locationRight) > 0) {
     if (line == size) {
-      printf("exceeded maximum supported locations of %i\n", size);
+      fprintf(stderr, "exceeded maximum supported locations of %i\n", size);
       return LOAD_ERROR;
     }
 
@@ -42,7 +42,7 @@ int compareInt(const void *a, const void *b) {
   }
 }
 
-int processLocations(char *filename) {
+int processLocations(const char *filename) {
   int left[MAX_LOCATIONS];
   int right[MAX_LOCATIONS];
 
@@ -82,7 +82,7 @@ int processLocations(char *filename) {
   return 0;
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, const char *argv[]) {
   if (argc != 2) {
     printf("Usage:\n    %s <input file name>\n", argv[0]);
     return 1;
