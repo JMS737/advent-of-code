@@ -3,10 +3,15 @@
 #include <stdio.h>
 #include <string.h>
 
-int main() {
-  const char filename[] = "./input.txt";
+int main(int argc, char *argv[]) {
+  char *filename;
 
-  int sum = 0;
+  if (argc != 2) {
+    printf("Usage:\n    %s <input file path>\n", argv[0]);
+    return 1;
+  }
+
+  filename = argv[1];
 
   FILE *input = fopen(filename, "r");
 
@@ -15,6 +20,7 @@ int main() {
     return 1;
   }
 
+  int sum = 0;
   int a, b;
   char eof = 0;
   int pos;
