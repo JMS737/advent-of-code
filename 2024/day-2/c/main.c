@@ -119,8 +119,6 @@ int main() {
   int safe = 0, unsafe = 0;
   char line[LINE_SIZE];
   char valid;
-  char user[1];
-  int skip;
 
   while (fgets(line, sizeof(line), input) != NULL) {
     valid = is_valid(line);
