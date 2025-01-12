@@ -2,58 +2,68 @@
 #include <stdlib.h>
 #include <string.h>
 
+int eval(int a, int b, int *direction) {
+  if (a == b) {
+    return 0;
+  }
+
+  int diff = b - a;
+  int absDiff = abs(diff);
+  int dir = diff / absDiff;
+
+  if (absDiff > 3) {
+    return 0;
+  }
+
+  if (!*direction) {
+    *direction = dir;
+  } else {
+    if (*direction != dir) {
+      return 0;
+    }
+  }
+
+  return 1;
+}
+
+int is_valid(char *line) {
+  int direction = 0;
+  int next, prev;
+  char *token = strtok(line, " ");
+
+  if (token != NULL) {
+    prev = atoi(token);
+    token = strtok(NULL, " ");
+  }
+
+  while (token != NULL) {
+    next = atoi(token);
+
+    if (!eval(prev, next, &direction)) {
+      return 0;
+    }
+    prev = next;
+    token = strtok(NULL, " ");
+  }
+
+  return 1;
+}
+
 int main() {
   FILE *input = fopen("../input.txt", "r");
 
   int safe = 0, unsafe = 0;
   char line[100];
-  int line_max;
-  int next, prev, diff, prevDiff;
   char valid;
 
-  char userInput[1];
-
   while (fgets(line, sizeof(line), input) != NULL) {
-    // printf("%s", line);
-    valid = 1;
-    prevDiff = 0;
-
-    char *token = strtok(line, " ");
-
-    if (token != NULL) {
-      prev = atoi(token);
-      // printf("start %i\n", prev);
-      token = strtok(NULL, " ");
-    }
-
-    while (token != NULL) {
-      next = atoi(token);
-
-      diff = prev - next;
-
-      // printf("%i to %i diff %i ", prev, next, diff);
-      if (prev == next || abs(diff) > 3
-        || (prevDiff < 0 && diff > 0) || (prevDiff > 0 && diff < 0)) {
-        // printf("invalid\n");
-        valid = 0;
-        break;
-      }
-
-      // printf("valid\n");
-      prev = next;
-      prevDiff = diff;
-      token = strtok(NULL, " ");
-    }
+    valid = is_valid(line);
 
     if (valid) {
       safe++;
-      // printf("safe S%i U%i\n", safe, unsafe);
     } else {
       unsafe++;
-      // printf("unafe S%i U%i\n", safe, unsafe);
     }
-
-    // scanf("%s", userInput);
   }
 
   printf("%i safe / %i unsafe\n", safe, unsafe);
