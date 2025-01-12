@@ -14,8 +14,8 @@ int compareInt(const void *a, const void *b) {
   }
 }
 
-int processLocations() {
-  FILE *locations = fopen("../input.txt", "r");
+int processLocations(char filename[]) {
+  FILE *locations = fopen(filename, "r");
   if (!locations) {
     fprintf(stderr, "File opening failed!\n");
     return EXIT_FAILURE;
@@ -75,7 +75,8 @@ int processLocations() {
 }
 
 int main() {
-  if (!processLocations()) {
+  char filename[] = "../input.txt";
+  if (!processLocations(filename)) {
     return EXIT_FAILURE;
   }
   return 0;
