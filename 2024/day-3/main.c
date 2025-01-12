@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#define LINE_SIZE 10000
+
 int main(int argc, char *argv[]) {
   char *filename;
 
@@ -22,24 +24,20 @@ int main(int argc, char *argv[]) {
 
   int sum = 0;
   int a, b;
-  char eof = 0;
-  int pos;
-  int lim = 10;
-
-  char line[10000];
-  char line_match[13];
-  char *line_start;
-  char pattern[] = "(mul\\([0-9]+,[0-9]+\\)|do(n't){0,1}\\(\\))";
-  regmatch_t matches[1];
-  regex_t regex;
-  int i_match;
   int len;
   int enabled = 1;
 
-  regcomp(&regex, pattern, REG_EXTENDED);
-  int rdebug;
+  char line[LINE_SIZE];
+  char line_match[13];
+  char *line_start; // keep track of our current position in the line buffer
+  char pattern[] = "(mul\\([0-9]+,[0-9]+\\)|do(n't){0,1}\\(\\))";
 
-  while (fgets(line, 10000, input) != NULL) {
+  regex_t regex;
+  regmatch_t matches[1]; // stores the single match (if any) returned by regexec
+
+  regcomp(&regex, pattern, REG_EXTENDED);
+
+  while (fgets(line, LINE_SIZE, input) != NULL) {
     // printf("read line %s\n", line);
     line_start = line;
 
