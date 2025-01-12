@@ -5,7 +5,11 @@
 #define DAMPENER_ENABLED 1
 #define LINE_SIZE 100
 
-int eval(int a, int b, int *direction) {
+// Requirements
+//   A level transition is valid if the following is true:
+//     - ALL transitions are increasing, or ALL are decreasing
+//     - The transition delta must be 1 <= delta <= 3
+int evaluate_transition(int a, int b, int *direction) {
   if (a == b) {
     return 0;
   }
@@ -30,11 +34,15 @@ int eval(int a, int b, int *direction) {
 }
 
 int is_valid(const char *line) {
-  int direction = 0;
   int next, prev;
-  char line_copy[LINE_SIZE];
 
+  // store the direction outside so it can persist between all checks
+  int direction = 0;
+
+  // strtok modifies the string, so make a mutable copy
+  char line_copy[LINE_SIZE];
   strcpy(line_copy, line);
+
   char *token = strtok(line_copy, " ");
 
   if (token != NULL) {
@@ -45,7 +53,7 @@ int is_valid(const char *line) {
   while (token != NULL) {
     next = atoi(token);
 
-    if (!eval(prev, next, &direction)) {
+    if (!evaluate_transition(prev, next, &direction)) {
       return 0;
     }
     prev = next;
@@ -55,16 +63,18 @@ int is_valid(const char *line) {
   return 1;
 }
 
+// Copies all tokens from one string to another
+// excluding the token at the given index 'skip'
 const char *remove_level(char *new_line, const char *line, int skip) {
   int i = 0;
-  int n = 0;
+  int n_head = 0;
   int iToken = 0;
 
   while (i < LINE_SIZE) {
 
     if (iToken != skip || line[i] == '\n') {
-      new_line[n] = line[i];
-      n++;
+      new_line[n_head] = line[i];
+      n_head++;
     }
 
     if (line[i] == '\n' || line[i] == 0) {
@@ -84,19 +94,25 @@ const char *remove_level(char *new_line, const char *line, int skip) {
     i++;
   }
 
-  if (new_line[n - 2] == ' ') {
-    new_line[n - 2] = '\n';
-    new_line[n -1] = 0;
+  // if skip was the last token in the string it will leave a trailing space
+  // which breaks the evaluate method, so shift the new line over
+  if (new_line[n_head - 2] == ' ') {
+    new_line[n_head - 2] = '\n';
+    new_line[n_head -1] = 0;
   }
 
-  while (n < LINE_SIZE) {
-    new_line[n] = 0;
-    n++;
+  // fill the rest of the string will null values as memory location may
+  // or may not be reused
+  while (n_head < LINE_SIZE) {
+    new_line[n_head] = 0;
+    n_head++;
   }
 
   return new_line;
 }
 
+// Test all combinations of the string with one of the levels removed
+// to see if one of them is valid
 int is_valid_dampened(const char *line) {
   int skip = 0;
   char new_line[LINE_SIZE];
