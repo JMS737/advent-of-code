@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-int load_board(const char *filename, int size, char board[size][size]) {
+int load_board(const char *filename, int size, char board[][size]) {
   FILE *input = fopen(filename, "r");
 
   if (input == NULL) {
@@ -24,7 +24,7 @@ int load_board(const char *filename, int size, char board[size][size]) {
   return 0;
 }
 
-void print_board(int size, char board[size][size]) {
+void print_board(int size, char board[][size]) {
   int i, j;
   for (j = 0; j < size; j++) {
     for (i = 0; i < size; i++) {
@@ -50,7 +50,7 @@ struct board_pos add(struct board_pos pos, const struct direction dir) {
   return pos;
 }
 
-int exists_word(int size, const char board[size][size], const char *word,
+int exists_word(int size, const char board[][size], const char *word,
                 const int i_char, struct board_pos pos,
                 const struct direction dir) {
   // if we reach the end of the search word, we must have found the full word!
@@ -73,7 +73,7 @@ int exists_word(int size, const char board[size][size], const char *word,
 }
 
 int scan_directions(const struct board_pos pos, const char *word,
-                    const int size, const char board[size][size]) {
+                    const int size, const char board[][size]) {
   int count = 0;
   struct direction dir;
 
@@ -90,7 +90,7 @@ int scan_directions(const struct board_pos pos, const char *word,
 }
 
 int find_occurrences(const char *word, const int size,
-                     const char board[size][size]) {
+                     const char board[][size]) {
   int count = 0;
   struct board_pos pos;
 
