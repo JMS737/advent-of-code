@@ -9,12 +9,13 @@ int load_board(const char *filename, int size, char board[][size]) {
     return 1;
   }
 
-  char line[size + 2]; // an area to write data including the newline and
-                       // termination characters
+  int b_size = size + 2;
+  char line[b_size]; // an area to write data including the newline and
+                     // termination characters
   int row = 0;
 
-  while (fgets(line, size + 2, input)) {
-    strncpy(board[row], line, size);
+  while (fgets(line, b_size, input)) {
+    stpncpy(board[row], line, size);
     // printf("read row %d end char '%c' board '%c'\n", row, line[size - 1],
     //        board[row][size - 1]);
     row++;
@@ -105,6 +106,45 @@ int find_occurrences(const char *word, const int size,
   return count;
 }
 
+const static struct direction TOP_LEFT = {-1, -1};
+const static struct direction TOP_RIGHT = {-1, 1};
+const static struct direction BOTTOM_LEFT = {1, -1};
+const static struct direction BOTTOM_RIGHT = {1, 1};
+
+char c_at(struct board_pos pos, int size, const char board[][size]) {
+  return board[pos.j][pos.i];
+}
+
+int is_valid(struct board_pos pos_a, struct board_pos pos_b, int size, const char board[][size]) {
+  char a = c_at(pos_a, size, board);
+  char b = c_at(pos_b, size, board);
+  return (a == 'M' && b == 'S') || (a == 'S' && b == 'M');
+}
+
+int exists_cross(struct board_pos *pos, int size, const char board[][size]) {
+  if (is_valid(add(*pos, TOP_LEFT), add(*pos, BOTTOM_RIGHT), size, board)
+    && is_valid(add(*pos, TOP_RIGHT), add(*pos, BOTTOM_LEFT), size, board)) {
+    return 1;
+  }
+  return 0;
+}
+
+int find_occurrences_part_2(int size, const char board[][size]) {
+  int count = 0;
+
+  struct board_pos pos;
+
+  for (pos.j = 1; pos.j < size - 1; pos.j++) {
+    for (pos.i = 1; pos.i < size - 1; pos.i++) {
+      if (board[pos.j][pos.i] == 'A') {
+        // TODO: implement search for M and S diagonally
+        count += exists_cross(&pos, size, board);
+      }
+    }
+  }
+  return count;
+}
+
 int main(int argc, char *argv[]) {
   if (argc != 3) {
     printf("Usage:\n   %s <size> <input file path>\n", argv[0]);
@@ -124,6 +164,9 @@ int main(int argc, char *argv[]) {
 
   int count = find_occurrences(search_word, size, board);
   printf("found %d occurrences of '%s'\n", count, search_word);
+
+  count = find_occurrences_part_2(size, board);
+  printf("found %d occurrences of XMAS Crosses'\n", count);
   // int found = exists_word(size, board, search_word, 0, start, dir);
 
   // if (found) {
